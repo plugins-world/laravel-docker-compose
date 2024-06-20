@@ -64,6 +64,7 @@ COPY ${ROOT_DIR}/project/api /app
 COPY ${ROOT_DIR}/image/laravel/frankenphp-linux-x86_64 /app/frankenphp
 COPY ${ROOT_DIR}/image/laravel/docker-php-entrypoint.sh /usr/local/bin/docker-php-entrypoint
 COPY ${ROOT_DIR}/image/laravel/supervisord.conf /etc/supervisor/supervisord.conf
+COPY ${ROOT_DIR}/image/laravel/crontab ~/crontab
 
 # Install
 RUN composer install

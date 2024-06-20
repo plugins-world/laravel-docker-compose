@@ -2,6 +2,8 @@
 
 set -eux
 
+id
+
 cd /app
 ls -al
 
@@ -10,6 +12,6 @@ ls -al
 # /usr/local/bin/php artisan route:cache
 # /usr/local/bin/php artisan config:cache
 
-/usr/bin/crontab docker/crontab
+/usr/bin/crontab ~/crontab
 
 exec supervisord -n

@@ -45,7 +45,20 @@ services:
     #   retries: 3
     #   timeout: 60s
 
-  # dashboard:
+  dashboard:
+    build:
+      context: .
+      dockerfile: ./image/dashboard/Dockerfile
+      args:
+        - ROOT_DIR=.
+    restart: unless-stopped
+    ports:
+      - "8001:80" # HTTP
+      # - "8001:3000" # HTTP
+    depends_on:
+      app:
+        condition: service_healthy
+
   # mobile:
   # python:
 

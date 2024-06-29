@@ -59,7 +59,7 @@ WORKDIR /app
 
 
 # Copy the Laravel application files into the container.
-COPY ${ROOT_DIR}/project/api /app
+COPY ${ROOT_DIR}/projects/api /app
 
 # Copy the container run files into the container.
 COPY ${ROOT_DIR}/image/laravel/frankenphp-linux-x86_64 /app/frankenphp
@@ -79,5 +79,3 @@ RUN set -eux; \
 ENTRYPOINT /usr/local/bin/docker-php-entrypoint
 
 EXPOSE 8000
-
-VOLUME "/app/storage"

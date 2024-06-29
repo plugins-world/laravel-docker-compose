@@ -37,7 +37,7 @@ RUN mkdir -p /usr/local/src/blast && \
 ARG ROOT_DIR=$ROOT_DIR
 
 # Copy the Laravel application files into the container.
-ADD ${ROOT_DIR}/project/Aves_blast /app
+ADD ${ROOT_DIR}/projects/Aves_blast /app
 
 WORKDIR /app
 

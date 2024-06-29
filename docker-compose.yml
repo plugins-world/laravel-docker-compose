@@ -33,6 +33,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      fileview:
+        condition: service_started
       # minio:
       #   condition: service_healthy
       # mailpit:
@@ -57,7 +59,7 @@ services:
   #       condition: service_healthy
 
   aves_blast:
-    platform: linux/x86_64
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./image/aves_blast/Dockerfile
@@ -147,6 +149,16 @@ services:
       test: [ "CMD", "curl -f http://localhost:${MINIO_PORT}/minio/health/live"]
       retries: 3
       timeout: 5s
+
+  # docker run -itd --name fileview -e KK_BASE_URL=https://fileview.iwnweb.com -e KK_LOCAL_PREVIEW_DIR=file -p 10002:8012 keking/kkfileview
+  fileview:
+    platform: linux/amd64
+    image: keking/kkfileview:4.1.0
+    environment:
+      - KK_BASE_URL=http://fileview
+      - KK_LOCAL_PREVIEW_DIR=file
+    ports:
+      - 8012:8012
 
   mailpit:
     image: axllent/mailpit:latest

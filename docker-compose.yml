@@ -60,12 +60,12 @@ services:
     platform: linux/x86_64
     build:
       context: .
-      dockerfile: ./image/Aves_blast/Dockerfile
+      dockerfile: ./image/aves_blast/Dockerfile
       args:
         - ROOT_DIR=.
     restart: unless-stopped
     volumes:
-      - ./projects/Aves_blast:/app
+      - ./projects/aves_blast:/app
     networks:
       - app
     depends_on:

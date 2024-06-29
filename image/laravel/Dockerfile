@@ -6,7 +6,7 @@ RUN \
     sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apt/sources.list.d/debian.sources && \
     sed -i 's/security-cdn.debian.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apt/sources.list.d/debian.sources && \
     apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --fix-missing --no-install-recommends \
         vim \
         acl \
         file \
@@ -40,9 +40,12 @@ RUN set -eux && \
 
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+ARG ROOT_DIR=$ROOT_DIR
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY ${ROOT_DIR}/image/laravel/composer-2.7.7.phar /usr/bin/composer
+RUN chmod +x /usr/bin/composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -54,8 +57,6 @@ ENV SERVER_NAME="http://"
 
 WORKDIR /app
 
-ARG ROOT_DIR=$ROOT_DIR
-ARG IMAGE_DIR=$IMAGE_DIR
 
 # Copy the Laravel application files into the container.
 COPY ${ROOT_DIR}/project/api /app

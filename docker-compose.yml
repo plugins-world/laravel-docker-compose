@@ -26,9 +26,8 @@ services:
       # - "443:443" # HTTPS
       # - "443:443/udp" # HTTP3
       - "8000:8000" # HTTP
-    hostname: app
     # volumes:
-    #   - ./api:/app
+    #   - ./projects/api:/app
     networks:
       - app
     depends_on:
@@ -36,31 +35,46 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      # - minio
-      # - mailpit
+      # minio:
+      #   condition: service_healthy
+      # mailpit:
+      #   condition: service_healthy
     # healthcheck: # doesn't uncomment healthcheck when use app volumns
-    #   test:
-    #     - CMD
-    #     - curl http://localhost:8000/
+    #   test: [ "CMD", "curl http://localhost:8000/"]
     #   retries: 3
     #   timeout: 60s
 
-  dashboard:
+  # dashboard:
+  #   build:
+  #     context: .
+  #     dockerfile: ./image/dashboard/Dockerfile
+  #     args:
+  #       - ROOT_DIR=.
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8001:80" # HTTP
+  #     # - "8001:3000" # HTTP
+  #   depends_on:
+  #     app:
+  #       condition: service_healthy
+
+  aves_blast:
+    platform: linux/x86_64
     build:
       context: .
-      dockerfile: ./image/dashboard/Dockerfile
+      dockerfile: ./image/Aves_blast/Dockerfile
       args:
         - ROOT_DIR=.
     restart: unless-stopped
-    ports:
-      - "8001:80" # HTTP
-      # - "8001:3000" # HTTP
+    volumes:
+      - ./project/Aves_blast:/app
+    networks:
+      - app
     depends_on:
-      app:
+      mysql:
         condition: service_healthy
-
-  # mobile:
-  # python:
+      rabbitmq:
+        condition: service_healthy
 
   mysql:
     image: mysql/mysql-server:${MYSQL_VERSION:-8.0}
@@ -81,11 +95,7 @@ services:
     networks:
       - app
     healthcheck:
-      test:
-        - CMD
-        - mysqladmin
-        - ping
-        - -p ${DB_PASSWORD}
+      test: [ "CMD", "mysqladmin", "ping", "-p ${DB_PASSWORD}"]
       retries: 3
       timeout: 5s
 
@@ -94,16 +104,12 @@ services:
     restart: unless-stopped
     ports:
       - ${REDIS_PORT:-6379}:6379
-    hostname: redis
     volumes:
       - ./data/redis:/data
     networks:
       - app
     healthcheck:
-      test:
-        - CMD
-        - redis-cli
-        - ping
+      test: [ "CMD", "redis-cli", "ping"]
       retries: 3
       timeout: 5s
 
@@ -114,9 +120,12 @@ services:
       - "${RABBITMQ_NODE_HOST_PORT:-5672}:5672"
       - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT:-15672}:15672"
     privileged: true
-    hostname: rabbitmq
     networks:
       - app
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping"]
+      timeout: 5s
+      retries: 3
 
   minio:
     image: minio/minio:latest
@@ -137,11 +146,7 @@ services:
       - app
     command: minio server /data/minio --console-address ":${MINIO_CONSOLE_PORT}"
     healthcheck:
-      test:
-        - CMD
-        - curl
-        - -f
-        - http://localhost:${MINIO_PORT}/minio/health/live
+      test: [ "CMD", "curl -f http://localhost:${MINIO_PORT}/minio/health/live"]
       retries: 3
       timeout: 5s
 

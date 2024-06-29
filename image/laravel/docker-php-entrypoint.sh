@@ -9,6 +9,7 @@ ls -al
 
 /usr/local/bin/php -v
 /usr/local/bin/php artisan migrate --force
+/usr/local/bin/php artisan plugin:seed BirdStrikeIdentify
 # /usr/local/bin/php artisan route:cache
 # /usr/local/bin/php artisan config:cache
 

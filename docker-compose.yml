@@ -2,11 +2,11 @@ networks:
   app:
     driver: bridge
 
-volumes:
-  mysql:
-    driver: local
-  redis:
-    driver: local
+# volumes:
+#   mysql:
+#     driver: local
+#   redis:
+#     driver: local
 
 # @see https://github.com/jaygaha/laravel-11-frankenphp-docker/blob/main/docker-compose.yml
 # @see https://github.com/dunglas/symfony-docker/blob/main/compose.yaml
@@ -29,9 +29,9 @@ services:
     networks:
       - app
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
       fileview:
         condition: service_started
@@ -74,6 +74,21 @@ services:
       app:
         condition: service_started
 
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - app
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping"]
+      retries: 3
+      timeout: 5s
+      start_interval: 1s
+
   mysql:
     image: mysql/mysql-server:${MYSQL_VERSION:-8.0}
     restart: unless-stopped
@@ -94,22 +109,10 @@ services:
       - app
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-p ${DB_PASSWORD}"]
+      # test: [ "CMD", "mysql", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}", "select 1", "${DB_DATABASE}"]
       retries: 3
       timeout: 5s
-
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    ports:
-      - ${REDIS_PORT:-6379}:6379
-    volumes:
-      - ./data/redis:/data
-    networks:
-      - app
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping"]
-      retries: 3
-      timeout: 5s
+      start_interval: 1s
 
   rabbitmq:
     image: rabbitmq:management-alpine
@@ -124,6 +127,7 @@ services:
       test: [ "CMD", "rabbitmq-diagnostics", "ping"]
       timeout: 5s
       retries: 3
+      start_interval: 1s
 
   # minio:
   #   image: minio/minio:latest
@@ -165,8 +169,10 @@ services:
       - 8012:8012
     healthcheck:
       test: [ "CMD", "curl http://127.0.0.1:8012"]
+      interval: 55s
       timeout: 5s
       retries: 3
+      start_interval: 1s
 
   mailpit:
     image: axllent/mailpit:latest

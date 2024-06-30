@@ -41,8 +41,8 @@ ADD ${ROOT_DIR}/projects/aves_blast /app
 
 WORKDIR /app
 
-VOLUME /app/blast_res
-VOLUME /app/blast_seq
-VOLUME /app/seq_info
+# VOLUME /app/blast_res
+# VOLUME /app/blast_seq
+# VOLUME /app/seq_info
 
 ENTRYPOINT python3 task.py

@@ -150,13 +150,23 @@ services:
 
   # docker run -itd --name fileview -e KK_BASE_URL=https://fileview.iwnweb.com -e KK_LOCAL_PREVIEW_DIR=file -p 10002:8012 keking/kkfileview
   fileview:
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65536
+        hard: 65536
     platform: linux/amd64
     image: keking/kkfileview:4.1.0
+    restart: unless-stopped
     environment:
-      - KK_BASE_URL=http://fileview
+      - KK_BASE_URL=http://127.0.0.1:8012
       - KK_LOCAL_PREVIEW_DIR=file
     ports:
       - 8012:8012
+    healthcheck:
+      test: [ "CMD", "curl http://127.0.0.1:8012"]
+      timeout: 5s
+      retries: 3
 
   mailpit:
     image: axllent/mailpit:latest

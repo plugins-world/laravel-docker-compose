@@ -43,8 +43,8 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 ARG ROOT_DIR=$ROOT_DIR
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
 
-# COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY ${ROOT_DIR}/image/laravel/composer-2.7.7.phar /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# COPY ${ROOT_DIR}/image/laravel/composer-2.7.7.phar /usr/bin/composer
 RUN chmod +x /usr/bin/composer
 
 ENV COMPOSER_ALLOW_SUPERUSER=1

@@ -13,12 +13,14 @@ networks:
 # @see https://frankenphp.dev/cn/docs/laravel/
 services:
   app:
+    container_name: bird-api
     build:
       context: .
       dockerfile: ./image/laravel/Dockerfile
       args:
         - ROOT_DIR=.
-    restart: unless-stopped
+    image: bird-api
+    restart: unless-stopped:3
     ports:
       # - "80:80" # HTTP
       # - "443:443" # HTTPS
@@ -60,12 +62,14 @@ services:
 
   aves_blast:
     platform: linux/amd64
+    container_name: bird-aves_blast
     build:
       context: .
       dockerfile: ./image/aves_blast/Dockerfile
       args:
         - ROOT_DIR=.
-    restart: unless-stopped
+    image: bird-aves_blast
+    restart: unless-stopped:3
     volumes:
       - ./projects/aves_blast:/app
     networks:
@@ -75,8 +79,9 @@ services:
         condition: service_started
 
   redis:
+    container_name: bird-redis
     image: redis:alpine
-    restart: unless-stopped
+    restart: unless-stopped:3
     ports:
       - ${REDIS_PORT:-6379}:6379
     volumes:
@@ -90,8 +95,9 @@ services:
       start_interval: 1s
 
   mysql:
+    container_name: bird-mysql
     image: mysql/mysql-server:${MYSQL_VERSION:-8.0}
-    restart: unless-stopped
+    restart: unless-stopped:3
     ports:
       - ${DB_PORT:-3306}:3306
     environment:
@@ -115,9 +121,10 @@ services:
       start_interval: 1s
 
   rabbitmq:
+    container_name: bird-rabbitmq
     platform: linux/amd64
     image: rabbitmq:3-management-alpine
-    restart: unless-stopped
+    restart: unless-stopped:3
     ports:
       - "${RABBITMQ_NODE_HOST_PORT:-5672}:5672"
       - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT:-15672}:15672"
@@ -155,14 +162,10 @@ services:
 
   # docker run -itd --name fileview -e KK_BASE_URL=https://fileview.iwnweb.com -e KK_LOCAL_PREVIEW_DIR=file -p 10002:8012 keking/kkfileview
   fileview:
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 65536
-        hard: 65536
+    container_name: bird-fileview
     platform: linux/amd64
     image: keking/kkfileview:4.1.0
-    restart: unless-stopped
+    restart: unless-stopped:3
     environment:
       - KK_BASE_URL=http://127.0.0.1:8012
       - KK_LOCAL_PREVIEW_DIR=file
@@ -174,10 +177,16 @@ services:
       timeout: 5s
       retries: 3
       start_interval: 1s
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65536
+        hard: 65536
 
   mailpit:
+    container_name: bird-mailpit
     image: axllent/mailpit:latest
-    restart: unless-stopped
+    restart: unless-stopped:3
     ports:
         - ${MAILPIT_PORT:-1025}:1025
         - ${MAILPIT_DASHBOARD_PORT:-8025}:8025

@@ -115,7 +115,8 @@ services:
       start_interval: 1s
 
   rabbitmq:
-    image: rabbitmq:management-alpine
+    platform: linux/amd64
+    image: rabbitmq:3-management-alpine
     restart: unless-stopped
     ports:
       - "${RABBITMQ_NODE_HOST_PORT:-5672}:5672"

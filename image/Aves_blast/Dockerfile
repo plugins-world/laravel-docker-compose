@@ -34,8 +34,7 @@ ARG NCBI_BLAST_VERSION=2.16.0
 ADD ${ROOT_DIR}/image/aves_blast/ncbi-blast-${NCBI_BLAST_VERSION}+-x64-linux.tar.gz /usr/local/src
 
 ADD https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-${NCBI_BLAST_VERSION}+-x64-linux.tar.gz /usr/local/src
-RUN mkdir -p /usr/local/blast && \
-    tar xvf /usr/local/src/ncbi-blast-${NCBI_BLAST_VERSION}+-x64-linux.tar.gz -C /usr/local/src/ && \
+RUN tar xvf /usr/local/src/ncbi-blast-${NCBI_BLAST_VERSION}+-x64-linux.tar.gz -C /usr/local/src/ && \
     rm -f /usr/local/src/ncbi-blast-${NCBI_BLAST_VERSION}+-x64-linux.tar.gz
 
 RUN mv /usr/local/src/ncbi-blast-${NCBI_BLAST_VERSION}+ /usr/local/blast/

@@ -20,7 +20,6 @@ services:
       args:
         - ROOT_DIR=.
     image: bird-api
-    restart: on-failure:3
     ports:
       # - "80:80" # HTTP
       # - "443:443" # HTTPS
@@ -69,7 +68,6 @@ services:
       args:
         - ROOT_DIR=.
     image: bird-aves_blast
-    restart: on-failure:3
     volumes:
       - ./projects/aves_blast:/app
     networks:
@@ -81,7 +79,6 @@ services:
   redis:
     container_name: bird-redis
     image: redis:alpine
-    restart: on-failure:3
     ports:
       - ${REDIS_PORT:-6379}:6379
     volumes:
@@ -97,7 +94,6 @@ services:
   mysql:
     container_name: bird-mysql
     image: mysql/mysql-server:${MYSQL_VERSION:-8.0}
-    restart: on-failure:3
     ports:
       - ${DB_PORT:-3306}:3306
     environment:
@@ -123,7 +119,6 @@ services:
   rabbitmq:
     container_name: bird-rabbitmq
     image: rabbitmq:3-management-alpine
-    restart: on-failure:3
     ports:
       - "${RABBITMQ_NODE_HOST_PORT:-5672}:5672"
       - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT:-15672}:15672"
@@ -164,7 +159,6 @@ services:
     container_name: bird-fileview
     platform: linux/amd64
     image: keking/kkfileview:4.1.0
-    restart: on-failure:3
     environment:
       - KK_BASE_URL=http://127.0.0.1:8012
       - KK_LOCAL_PREVIEW_DIR=file
@@ -185,7 +179,6 @@ services:
   mailpit:
     container_name: bird-mailpit
     image: axllent/mailpit:latest
-    restart: on-failure:3
     ports:
         - ${MAILPIT_PORT:-1025}:1025
         - ${MAILPIT_DASHBOARD_PORT:-8025}:8025
